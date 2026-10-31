@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+/*
+ * هوية الموقع: الألوان بتيجي من الداش بورد (شكل الموقع ← الألوان)
+ * --brand = اللون الأساسي، وكل الدرجات بتتحسب منه تلقائياً.
+ */
+:root {
+  --brand: #b02f59;
+  --accent: #b8935a;
+  --page-bg: #fbf7f3;
+  --radius-scale: 1;
+}
+
+@theme {
+  --color-brand-50: color-mix(in oklab, var(--brand) 6%, white);
+  --color-brand-100: color-mix(in oklab, var(--brand) 13%, white);
+  --color-brand-200: color-mix(in oklab, var(--brand) 26%, white);
+  --color-brand-300: color-mix(in oklab, var(--brand) 45%, white);
+  --color-brand-400: color-mix(in oklab, var(--brand) 70%, white);
+  --color-brand-500: color-mix(in oklab, var(--brand) 87%, white);
+  --color-brand-600: var(--brand);
+  --color-brand-700: color-mix(in oklab, var(--brand) 84%, black);
+  --color-brand-800: color-mix(in oklab, var(--brand) 76%, black);
+  --color-brand-900: color-mix(in oklab, var(--brand) 62%, black);
+  --color-brand-950: color-mix(in oklab, var(--brand) 46%, #160b10);
+
+  --color-cream: var(--page-bg);
+  --color-sand: color-mix(in oklab, var(--page-bg) 88%, #c9a98c);
+  --color-ink: #24181d;
+  --color-muted: #806f75;
+  --color-line: color-mix(in oklab, var(--page-bg) 84%, #b9a194);
+  --color-gold: var(--accent);
+  --color-gold-light: color-mix(in oklab, var(--accent) 55%, white);
+  --color-gold-dark: color-mix(in oklab, var(--accent) 75%, black);
+  --color-leaf: #4f6b4a;
+
+  --radius-xl: calc(0.75rem * var(--radius-scale));
+  --radius-2xl: calc(1rem * var(--radius-scale));
+  --radius-3xl: calc(1.5rem * var(--radius-scale));
+
+  --font-sans: var(--font-plex), system-ui, sans-serif;
+  --font-display: var(--display-family), var(--font-plex), serif;
+
+  --shadow-soft: 0 1px 2px rgb(36 24 29 / 0.04), 0 8px 24px -10px rgb(36 24 29 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(36 24 29 / 0.04), 0 24px 48px -16px rgb(36 24 29 / 0.22);
+  --shadow-luxe: 0 30px 60px -30px rgb(36 24 29 / 0.35), 0 0 0 1px rgb(36 24 29 / 0.03);
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-up: fade-up 0.9s var(--ease-luxe) both;
+  --animate-fade-in: fade-in 1.2s ease both;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* شكل الحواف من الداش بورد */
+html[data-corners="soft"] { --radius-scale: 0.5; }
+html[data-corners="sharp"] { --radius-scale: 0.15; }
+html[data-corners="soft"] .rounded-\[2rem\] { border-radius: 1rem; }
+html[data-corners="sharp"] .rounded-\[2rem\],
+html[data-corners="sharp"] .rounded-full:not(.h-2):not(.w-2):not(.h-1\.5) { border-radius: 0.3rem; }
+
+/* سكشن بخلفية بلون الموقع: النصوص بيضا */
+.on-brand :is(h2, h3, .section-title) { color: white; }
+.on-brand .text-muted { color: rgb(255 255 255 / 0.75); }
+.on-brand .eyebrow { color: var(--color-gold-light); }
+
+/* سكشنين ورا بعض من غير خلفية: مسافة واحدة بينهم بدل ما تتضاعف */
+.section-plain + .section-plain { padding-top: 0; }
+
+/* سكشن متوسّط من الداش بورد */
+.section-center .section-head { flex-direction: column; align-items: center; text-align: center; }
+.section-center .section-head h2 { justify-content: center; }
+.section-center .section-head .eyebrow { justify-content: center; }
+
+/* خط العناوين: Amiri (نسخ كلاسيكي) للعربي و Cormorant للإنجليزي */
+:root { --display-family: var(--font-amiri); }
+html[lang="en"] { --display-family: var(--font-cormorant); }
+
+/* حركة دخول السلة والقائمة من الجنب الصح حسب اللغة */
+@keyframes drawer-from-right { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes drawer-from-left { from { transform: translateX(-100%); } to { transform: none; } }
+.animate-drawer-end { animation: drawer-from-left 0.45s var(--ease-luxe) both; }
+[dir="ltr"] .animate-drawer-end { animation-name: drawer-from-right; }
+.animate-drawer-start { animation: drawer-from-right 0.45s var(--ease-luxe) both; }
+[dir="ltr"] .animate-drawer-start { animation-name: drawer-from-left; }
+
+/* السكاشن بتظهر بهدوء وهي داخلة الشاشة (المتصفحات اللي بتدعمها بس، من غير JavaScript) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+/* شريط الإعلان بيتحرك ببطء لو أطول من الشاشة */
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+[dir="rtl"] .animate-marquee { animation-name: marquee-rtl; }
+@keyframes marquee-rtl { from { transform: translateX(0); } to { transform: translateX(50%); } }
+
+/* مؤشر تقدم شرائح السلايدر */
+@keyframes progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+    font-feature-settings: "ss01";
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+    line-height: 1.3;
+  }
+  html[lang="en"] :is(h1, h2, h3, h4) {
+    letter-spacing: -0.01em;
+  }
+  /* التباعد بين الحروف بيقطّع الحروف العربي المتصلة، فبيشتغل في الإنجليزي بس */
+  html[lang="ar"] :is([class*="tracking-"], .eyebrow) {
+    letter-spacing: 0 !important;
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+  input, textarea, select, button {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary,
+  .btn-outline,
+  .btn-light,
+  .btn-gold {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3 text-sm font-semibold tracking-wide transition duration-300
+      disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98];
+  }
+  .btn-primary {
+    @apply bg-brand-800 text-white shadow-soft hover:bg-brand-900 hover:shadow-lift;
+  }
+  .btn-outline {
+    @apply border border-brand-800/70 text-brand-800 hover:border-brand-800 hover:bg-brand-800 hover:text-white;
+  }
+  .btn-light {
+    @apply bg-white/95 text-ink shadow-soft backdrop-blur hover:bg-white hover:shadow-lift;
+  }
+  .btn-gold {
+    @apply text-white shadow-soft hover:shadow-lift;
+    background-image: linear-gradient(120deg, var(--color-gold-dark), var(--color-gold) 45%, var(--color-gold-light) 70%, var(--color-gold));
+    background-size: 220% 100%;
+    background-position: 100% 0;
+    transition: background-position 0.8s var(--ease-luxe), box-shadow 0.3s, transform 0.2s;
+  }
+  .btn-gold:hover {
+    background-position: 0 0;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink placeholder:text-muted/70
+      transition focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/15;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-semibold text-ink;
+  }
+
+  /* عنوان صغير فوق العناوين الكبيرة: خط ذهبي رفيع + كلمة */
+  .eyebrow {
+    @apply flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-gold-dark sm:text-xs;
+  }
+  .eyebrow::before,
+  .section-center .eyebrow::after {
+    content: "";
+    @apply h-px w-8 bg-gradient-to-l from-gold to-transparent sm:w-12;
+  }
+  [dir="ltr"] .eyebrow::before { @apply bg-gradient-to-r; }
+  .section-center .eyebrow::after { @apply bg-gradient-to-r; }
+  [dir="ltr"] .section-center .eyebrow::after { @apply bg-gradient-to-l; }
+
+  .section-title {
+    @apply font-display text-3xl font-bold sm:text-4xl lg:text-[2.75rem];
+  }
+
+  /* رابط بخط تحتاني بيتمد مع الماوس */
+  .link-underline {
+    @apply relative;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.5s var(--ease-luxe);
+  }
+  [dir="ltr"] .link-underline { background-position: 0 100%; }
+  .link-underline:hover,
+  .group:hover .link-underline,
+  .link-underline[aria-current="page"] { background-size: 100% 1px; }
+
+  .card {
+    @apply rounded-3xl border border-line bg-white;
+  }
+
+  /* محتوى HTML جاي من الداش بورد */
+  .prose-content {
+    @apply text-[15px] leading-8 text-ink/85;
+  }
+  .prose-content h2 { @apply mt-6 mb-3 text-2xl font-bold; }
+  .prose-content h3 { @apply mt-5 mb-2 text-xl font-bold; }
+  .prose-content p { @apply mb-4; }
+  .prose-content ul { @apply mb-4 list-disc ps-6 marker:text-gold; }
+  .prose-content ol { @apply mb-4 list-decimal ps-6 marker:text-gold; }
+  .prose-content li { @apply mb-1; }
+  .prose-content a { @apply text-brand-700 underline decoration-gold/50 underline-offset-4; }
+  .prose-content strong { @apply font-bold text-ink; }
+  .prose-content img { @apply my-4 rounded-2xl; }
+  .prose-content blockquote { @apply my-6 border-s-2 border-gold ps-5 font-display text-xl not-italic text-brand-900; }
+
+  /* صفحات المحتوى (من نحن...): أول فقرة أكبر، وعناوين بخط مميز */
+  .prose-page > p:first-child { @apply font-display text-xl leading-9 text-ink sm:text-2xl sm:leading-[2.75rem]; }
+  .prose-page h2 { @apply mt-12 flex items-center gap-3 font-display text-3xl text-ink; }
+  .prose-page h2::before { content: ""; @apply h-px w-10 shrink-0 bg-gold; }
+  .prose-page ul { @apply list-none space-y-3 ps-0; }
+  .prose-page ul li { @apply relative border-b border-line py-3 ps-8; }
+  .prose-page ul li::before { content: "✦"; @apply absolute start-0 top-3 text-sm text-gold; }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
